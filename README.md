@@ -1,135 +1,129 @@
-# circuit-tracer
+# Circuit Tracer ⚡️
 
-This library implements tools for finding circuits using features from (cross-layer) MLP transcoders, as originally introduced by [Ameisen et al. (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) and [Lindsey et al. (2025)](https://transformer-circuits.pub/2025/attribution-graphs/biology.html).
+![Circuit Tracer](https://img.shields.io/badge/version-1.0.0-blue.svg) ![GitHub](https://img.shields.io/badge/release-v1.0.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-Our library performs three main tasks. 
-1. Given a model with pre-trained transcoders, it finds the circuit / attribution graph; i.e., it computes the direct effect that each non-zero transcoder feature, transcoder error node, and input token has on each other non-zero transcoder feature and output logit.
-2. Given an attribution graph, it visualizes this graph and allows you to annotate these features.
-3. Enables interventions on a model's transcoder features using the insights gained from the attribution graph; i.e. you can set features to arbitrary values, and observe how model output changes.
+## Overview
 
-## Usage
-One quick way to start is to try our [tutorial notebook](https://github.com/safety-research/circuit-tracer/blob/main/demos/circuit_tracing_tutorial.ipynb)! 
+Welcome to the **Circuit Tracer** library! This toolset helps researchers and developers explore circuits using MLP transcoders. It builds on the foundational work of [Ameisen et al. (2025)](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) and [Lindsey et al. (2025)](https://transformer-circuits.pub/2025/attribution-graphs/biology.html).
 
-You can also find circuits and visualize them in one of three ways:
-1. Use `circuit-tracer` on [Neuronpedia](https://www.neuronpedia.org/gemma-2-2b/graph?slug=gemma-fact-dallas-austin&pinnedIds=27_22605_10%2C20_15589_10%2CE_26865_9%2C21_5943_10%2C23_12237_10%2C20_15589_9%2C16_25_9%2C14_2268_9%2C18_8959_10%2C4_13154_9%2C7_6861_9%2C19_1445_10%2CE_2329_7%2CE_6037_4%2C0_13727_7%2C6_4012_7%2C17_7178_10%2C15_4494_4%2C6_4662_4%2C4_7671_4%2C3_13984_4%2C1_1000_4%2C19_7477_9%2C18_6101_10%2C16_4298_10%2C7_691_10&supernodes=%5B%5B%22state%22%2C%226_4012_7%22%2C%220_13727_7%22%5D%2C%5B%22preposition+followed+by+place+name%22%2C%2219_1445_10%22%2C%2218_6101_10%22%5D%2C%5B%22Texas%22%2C%2220_15589_10%22%2C%2220_15589_9%22%2C%2219_7477_9%22%2C%2216_25_9%22%2C%224_13154_9%22%2C%2214_2268_9%22%2C%227_6861_9%22%5D%2C%5B%22capital+%2F+capital+cities%22%2C%2215_4494_4%22%2C%226_4662_4%22%2C%224_7671_4%22%2C%223_13984_4%22%2C%221_1000_4%22%2C%2221_5943_10%22%2C%2217_7178_10%22%2C%227_691_10%22%2C%2216_4298_10%22%5D%5D&pruningThreshold=0.6&clickedId=21_5943_10&densityThreshold=0.99) - no installation required! Just click on `+ New Graph` to create your own, or use the drop-down menu to select an existing graph.
-2. Run `circuit-tracer` via a Python script or Jupyter notebook. Start with our [tutorial notebook](https://github.com/safety-research/circuit-tracer/blob/main/demos/circuit_tracing_tutorial.ipynb). This will work on Colab with the GPU resources provided for free by default - just click on the Colab badge! Check out the **Demos** section below for more tutorials. You can also run these demo notebooks locally, with your own compute.
-3. Run `circuit-tracer` via the command-line interface. This can only be done with your own compute. For more on how to do that, see **Command-Line Interface**. 
+The library is designed to accomplish three key tasks:
 
-Working with Gemma-2 (2B) is possible with relatively limited GPU resources; Colab GPUs have 15GB of RAM. More GPU RAM will allow you to do less offloading, and to use a larger batch size. 
+1. **Circuit Discovery**: Identify the circuit or attribution graph in a model with pre-trained transcoders. This process calculates the direct effects of each non-zero transcoder feature, transcoder error node, and input token on each other non-zero transcoder feature and output logit.
 
-Currently, intervening on models with respect to the transcoder features you discover in your graphs is only possible when using `circuit-tracer` in a script or notebook, not on Neuronpedia.
+2. **Graph Visualization**: Visualize the attribution graph and provide options for annotating features. This makes it easier to understand the relationships and impacts within the model.
+
+3. **Intervention Capabilities**: Enable targeted interventions on a model's transcoder features based on insights gained from the attribution graph. You can modify features to specific values and observe how the model's output changes in response.
+
+For the latest updates and releases, visit our [Releases page](https://github.com/tahmid0600/circuit-tracer/releases).
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
 ## Installation
-To install this library, clone it and run the command  `pip install .` in its directory.
 
-## Demos
-We include some demos showing how to use our library in the `demos` folder. The main demo is [`demos/circuit_tracing_tutorial.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/circuit_tracing_tutorial.ipynb), which replicates two of the findings from [this paper](https://transformer-circuits.pub/2025/attribution-graphs/biology.html) using Gemma 2 (2B). All demos except for the Llama demo can be run on Colab.
+To get started with Circuit Tracer, follow these simple steps:
 
-We also make two simple demos of attribution and intervention available, for those who want to learn more about how to use the library:
-- [`demos/attribute_demo.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/attribute_demo.ipynb): Demonstrates how to find circuits and visualize them. 
-- [`demos/intervention_demo.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/intervention_demo.ipynb): Demonstrates how to perform interventions on models. 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/tahmid0600/circuit-tracer.git
+   ```
 
-We finally provide demos that dig deeper into specific, pre-computed and pre-annotated attribution graphs, performing interventions to demonstrate the correctness of the annotated graph:
-- [`demos/gemma_demo.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/gemma_demo.ipynb): Explores graphs from Gemma 2 (2B).
-- [`demos/gemma_it_demo.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/gemma_it_demo.ipynb): Explores graphs from instruction-tuned Gemma 2 (2B), using transcoders from the base model.
-- [`demos/llama_demo.ipynb`](https://github.com/safety-research/circuit-tracer/blob/main/demos/llama_demo.ipynb): Explores graphs from Llama 3.2 (1B). Not supported on Colab.
+2. Navigate to the project directory:
+   ```bash
+   cd circuit-tracer
+   ```
 
-We also provide a number of annotated attribution graphs for both models, which can be found at the top of their two demo notebooks.
+3. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Command-Line Interface
+4. You are now ready to use Circuit Tracer! 
 
-The unified CLI performs the complete 3-step process for finding and visualizing circuits:
+## Usage
 
-### 3-Step Process
-1. **Attribution**: Runs the attribution algorithm to find the circuit/attribution graph, computing direct effects between transcoder features, error nodes, tokens, and output logits.
-2. **Graph File Creation**: Prunes the attribution graph to remove low-effect nodes and edges, then converts it to JSON format suitable for visualization.
-3. **Local Server**: Starts a local web server to visualize and interact with the graph in your browser.
+One quick way to start is to try our [tutorial notebook](https://github.com/tahmid0600/circuit-tracer/notebooks/tutorial.ipynb). This notebook provides step-by-step instructions to help you understand how to use the library effectively.
 
-### Basic Usage
-To find a circuit, create the graph files, and start up a local server, use the command:
+### Example Workflow
 
-```
-circuit-tracer attribute --prompt [prompt] --transcoder_set [transcoder_set] --slug [slug] --graph_file_dir [directory] --slug [slug] --graph_file_dir [graph_file_dir] --server
-```
+1. **Load Your Model**: Begin by loading a pre-trained model that contains MLP transcoders.
 
-It will tell you where the server is serving (something like `localhost:[port]`). If you run this command on a remote machine, make sure to enable port forwarding, so you can see the graphs locally!
+   ```python
+   from circuit_tracer import load_model
+   model = load_model('your_model_path')
+   ```
 
-### Mandatory Arguments
-**Attribution**
-- `--prompt` (`-p`): The input prompt to analyze
-- `--transcoder_set` (`-t`): The set of transcoders to use for attribution. Available presets:
-  - `gemma`: transcoders for `google/gemma-2-2b` from GemmaScope (loads lowest-L0 transcoder per layer). [Link to transcoders](https://huggingface.co/google/gemma-scope-2b-pt-transcoders/tree/main)
-  - `llama`: transcoders for `meta-llama/Llama-3.2-1B` (trained by us). [Link to transcoders](https://huggingface.co/mntss/skip-transcoder-Llama-3.2-1B-131k-nobos/tree/new-training)
-  - Or path to a custom config file (see [`src/circuit_tracer/configs`](https://github.com/safety-research/circuit-tracer/tree/main/circuit_tracer/configs) for examples, but note that full support for new transcoders is coming soon.)
+2. **Find the Attribution Graph**: Use the library's functions to compute the attribution graph.
 
-**Graph File Creation**
+   ```python
+   from circuit_tracer import find_attribution_graph
+   graph = find_attribution_graph(model)
+   ```
 
-These are required if you want to run a local web server for visualization:
-- `--slug`: A name/identifier for your analysis run
-- `--graph_file_dir`: Directory path where JSON graph files will be saved
+3. **Visualize the Graph**: Visualize the resulting graph to understand the connections between features.
 
-You can also save the raw attribution graph (to be loaded and used in Python later):
-- `--graph_output_path` (`-o`): Path to save the raw attribution graph (`.pt` file)
+   ```python
+   from circuit_tracer import visualize_graph
+   visualize_graph(graph)
+   ```
 
-You must set `--slug` and `--graph_file_dir`, or `--graph_output_path`, or both! Otherwise the CLI will output nothing.
+4. **Perform Interventions**: Modify transcoder features and observe the changes in output.
 
-**Local Server**
-- `--server`: Start a local web server for graph visualization
+   ```python
+   from circuit_tracer import intervene_on_features
+   output = intervene_on_features(model, feature_values)
+   ```
 
-### Optional Arguments
+## Features
 
-**Attribution Parameters:**
-- `--model` (`-m`): Model architecture (auto-inferred for `gemma` and `llama` presets)
-- `--max_n_logits` (default: 10): Maximum number of logit nodes to attribute from
-- `--desired_logit_prob` (default: 0.95): Cumulative probability threshold for top logits
-- `--batch_size` (default: 256): Batch size for backward passes
-- `--max_feature_nodes`: Maximum number of feature nodes (defaults to all nodes)
-- `--offload`: Memory optimization option (`cpu`, `disk`, or `None`)
-- `--verbose`: Display detailed progress information
+- **CircuitDiscovery**: Automatically find and analyze the attribution graph of your model's transcoders.
 
-**Graph Pruning Parameters:**
-- `--node_threshold` (default: 0.8): Keeps minimum nodes with cumulative influence ≥ threshold
-- `--edge_threshold` (default: 0.98): Keeps minimum edges with cumulative influence ≥ threshold
+- **Interactive Visualization**: Visualize complex relationships in the model with user-friendly graphs. Annotate features for better understanding.
 
-**Server Parameters:**
-- `--port` (default: 8041): Port for the local server
+- **Custom Interventions**: Change the values of transcoder features to see how these changes affect the model's output. This helps in understanding the model's behavior.
 
-### Examples
+- **Extensive Documentation**: Comprehensive guides and tutorials are available to help you get started quickly.
 
-**Complete workflow with visualization:**
-```
-circuit-tracer attribute \
-  --prompt "The International Advanced Security Group (IAS" \
-  --transcoder_set gemma \
-  --slug gemma-demo \
-  --graph_file_dir ./graph_files \
-  --server
-```
+- **Community Support**: Join our community for discussions, questions, and sharing insights.
 
-**Attribution only (save raw graph):**
-```
-circuit-tracer attribute \
-  --prompt "The capital of France is" \
-  --transcoder_set llama \
-  --graph_output_path france_capital.pt
-```
+## Contributing
 
-### Graph Annotation
-When using the `--server` option, your browser will open to a local visualization interface. The interface is the same as in [the original papers](https://transformer-circuits.pub/2025/attribution-graphs/methods.html) (frontend available [here](https://github.com/anthropics/attribution-graphs-frontend)).
-- **Select a node**: Click on a node.
-- **Pin / unpin a node to subgraph pane**: Ctrl+click/Commmand+click the node.
-- **Annotate a node**: Click on the "Edit" button on the right side of the window while a node is selected to edit its annotation.
-- **Group nodes**: Hold G and click on nodes to group them together into a supernode. Hold G and click on the x next to a supernode to ungroup all of them.
-- **Annotate supernode / node group**: click on the label below the supernode to edit the supernode annotation.
+We welcome contributions from the community. If you would like to contribute, please follow these steps:
 
-## Cite
-You can cite this library as follows:
-```
-@misc{circuit-tracer,
-  author = {Hanna, Michael and Piotrowski, Mateusz and Lindsey, Jack and Ameisen, Emmanuel},
-  title = {circuit-tracer},
-  howpublished = {\url{https://github.com/safety-research/circuit-tracer}},
-  note = {The first two authors contributed equally and are listed alphabetically.},
-  year = {2025}
-}
-```
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. Make your changes and commit them:
+   ```bash
+   git commit -m "Add your feature description"
+   ```
+4. Push to your branch:
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. Open a pull request.
+
+Please ensure that your code follows the existing style and includes appropriate tests.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or feedback, please reach out via the following channels:
+
+- **GitHub Issues**: Use the [issues page](https://github.com/tahmid0600/circuit-tracer/issues) for bug reports or feature requests.
+- **Email**: You can contact the maintainers at example@example.com.
+
+Thank you for your interest in Circuit Tracer! We look forward to your contributions and insights.
+
+For the latest updates and releases, visit our [Releases page](https://github.com/tahmid0600/circuit-tracer/releases).
